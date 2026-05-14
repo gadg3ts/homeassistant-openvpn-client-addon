@@ -11,4 +11,4 @@ RUN rm -Rf /tmp/*
 COPY run.sh /
 RUN chmod a+x /run.sh
 
-CMD [ "/run.sh" ]
+CMD [ "exec /run.sh" ]
