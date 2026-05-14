@@ -5,7 +5,7 @@ ENV LANG=C.UTF-8
 # Install requirements for add-on
 RUN apk --no-cache --no-progress upgrade && \
     apk --no-cache --no-progress add jq openvpn \
-    rm -Rf /tmp/*
+    rm -R -f /tmp/*
 
 # Copy data for add-on
 COPY run.sh /
