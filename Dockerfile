@@ -1,6 +1,6 @@
 FROM ghcr.io/home-assistant/base:latest
 
-ENV LANG C.UTF-8
+ENV LANG=C.UTF-8
 
 # Install requirements for add-on
 RUN apk --no-cache --no-progress upgrade && \
