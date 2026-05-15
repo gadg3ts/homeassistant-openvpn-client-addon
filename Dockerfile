@@ -2,7 +2,7 @@ FROM ghcr.io/home-assistant/base:latest
 
 ENV LANG=C.UTF-8
 
-# Install requirements 
+# Install requirements
 RUN apk --no-cache --no-progress upgrade && \
     apk --no-cache --no-progress add jq openvpn
 
@@ -16,4 +16,6 @@ RUN mkdir -p /etc/services.d/openvpn-client
 COPY run.sh /etc/services.d/openvpn-client/run
 RUN chmod a+x /etc/services.d/openvpn-client/run
 
-# No CMD or ENTRYPOINT needed; the base image handles it.
+# Explicitly ensure we aren't overriding the entrypoint incorrectly
+# This line confirms we use the base image's init system
+ENTRYPOINT [ "/init" ]
