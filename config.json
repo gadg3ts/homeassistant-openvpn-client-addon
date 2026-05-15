@@ -1,6 +1,6 @@
 {
   "name": "OpenVPN Client",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "slug": "openvpn_client",
   "description": "OpenVPN Client",
   "url": "https://github.com/gadg3ts/homeassistant-openvpn-client-addon",
