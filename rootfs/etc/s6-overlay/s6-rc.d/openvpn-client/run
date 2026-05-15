@@ -1,11 +1,12 @@
 #!/usr/bin/env bashio
 set +u
 
-bashio::log.info "Starting OpenVPN Client (Direct Entry Mode)..."
-
-# Fetch config
 OVPNFILE=$(bashio::config 'ovpnfile')
 OPENVPN_CONFIG="/share/${OVPNFILE}"
+
+bashio::log.info "Fixing permissions for ${OPENVPN_CONFIG}..."
+# Ensure the file is readable
+chmod 644 "${OPENVPN_CONFIG}" || bashio::log.warn "Could not chmod file"
 
 # Initialize TUN interface
 if [ ! -d /dev/net ]; then
@@ -15,5 +16,5 @@ if [ ! -c /dev/net/tun ]; then
     mknod /dev/net/tun c 10 200
 fi
 
-# Launch OpenVPN
+bashio::log.info "Starting OpenVPN..."
 exec openvpn --config "${OPENVPN_CONFIG}" --cd /share
