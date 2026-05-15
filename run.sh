@@ -1,27 +1,50 @@
 #!/usr/bin/with-contenv bashio
-# Ensure there are NO blank lines or comments before the shebang above.
-
 set +u
 
-# Fetch config using bashio
+# Fetch configuration using bashio
 OVPNFILE=$(bashio::config 'ovpnfile')
 OPENVPN_CONFIG="/share/${OVPNFILE}"
 
-# Initialize the tun interface
-if [ ! -d /dev/net ]; then
-    mkdir -p /dev/net
-fi
-if [ ! -c /dev/net/tun ]; then
-    mknod /dev/net/tun c 10 200
-fi
+bashio::log.info "Starting OpenVPN Client Add-on..."
 
-# Wait for file to exist
-bashio::log.info "Searching for: ${OPENVPN_CONFIG}"
-while [[ ! -f "${OPENVPN_CONFIG}" ]]; do
-    bashio::log.yellow "Waiting for config file... check your /share folder."
+################################################################################
+# Initialize the tun interface
+################################################################################
+function init_tun_interface(){
+    if [ ! -d /dev/net ]; then
+        mkdir -p /dev/net
+    fi
+
+    if [ ! -c /dev/net/tun ]; then
+        bashio::log.info "Creating TUN device..."
+        mknod /dev/net/tun c 10 200
+    fi
+}
+
+################################################################################
+# Check if the .ovpn file exists in /share
+################################################################################
+function check_files_available(){
+    if [[ ! -f "${OPENVPN_CONFIG}" ]]; then
+        bashio::log.error "File ${OPENVPN_CONFIG} not found in /share"
+        return 1
+    fi
+    return 0
+}
+
+################################################################################
+# Main Loop: Wait for configuration then start OpenVPN
+################################################################################
+
+init_tun_interface
+
+bashio::log.info "Waiting for OpenVPN configuration: ${OPENVPN_CONFIG}"
+
+while ! check_files_available; do
     sleep 10
 done
 
-bashio::log.info "Starting OpenVPN connection..."
-# Use 'exec' here to replace the shell process with OpenVPN
+bashio::log.info "Configuration found! Launching OpenVPN..."
+
+# Using exec ensures OpenVPN receives signals directly from the supervisor
 exec openvpn --config "${OPENVPN_CONFIG}"

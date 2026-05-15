@@ -2,20 +2,19 @@ FROM ghcr.io/home-assistant/base:latest
 
 ENV LANG=C.UTF-8
 
-# Install requirements
+# Install requirements for add-on
 RUN apk --no-cache --no-progress upgrade && \
     apk --no-cache --no-progress add jq openvpn
 
 # Clean up
 RUN rm -Rf /tmp/*
 
-# Create the S6 service directory
+# Create S6 service directory
+# This tells the init system to manage our script as a service
 RUN mkdir -p /etc/services.d/openvpn-client
 
-# Copy the script as the S6 'run' file
+# Copy run.sh to the service directory and rename it to 'run'
 COPY run.sh /etc/services.d/openvpn-client/run
 RUN chmod a+x /etc/services.d/openvpn-client/run
 
-# Explicitly ensure we aren't overriding the entrypoint incorrectly
-# This line confirms we use the base image's init system
-ENTRYPOINT [ "/init" ]
+# No CMD or ENTRYPOINT needed as the base image provides /init
