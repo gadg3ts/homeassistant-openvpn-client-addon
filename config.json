@@ -2,18 +2,17 @@
   "name": "OpenVPN Client",
   "version": "2026-05-15-4",
   "slug": "openvpn_client",
-  "description": "OpenVPN Client",
-  "url": "https://github.com/gadg3ts/homeassistant-openvpn-client-addon",
-  "arch": ["armhf", "armv7", "aarch64", "amd64", "i386"],
+  "description": "OpenVPN Client Add-on",
+  "arch": ["aarch64", "amd64", "armv7"],
   "startup": "services",
   "boot": "auto",
-  "host_network": true,
   "privileged": ["NET_ADMIN"],
+  "devices": ["/dev/net/tun:/dev/net/tun"],
+  "host_network": true,
   "options": {
     "ovpnfile": "client.ovpn"
   },
   "schema": {
     "ovpnfile": "str"
-  },
-  "map" : ["share:rw"]
+  }
 }
