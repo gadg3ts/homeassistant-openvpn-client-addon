@@ -2,13 +2,18 @@ FROM ghcr.io/home-assistant/base:latest
 
 ENV LANG=C.UTF-8
 
-# Install requirements for add-on
+# Install requirements 
 RUN apk --no-cache --no-progress upgrade && \
     apk --no-cache --no-progress add jq openvpn
+
+# Clean up
 RUN rm -Rf /tmp/*
 
-# Copy data for add-on
-COPY run.sh /
-RUN chmod a+x /run.sh
+# Create the S6 service directory
+RUN mkdir -p /etc/services.d/openvpn-client
 
-CMD [ "exec /run.sh" ]
+# Copy the script as the S6 'run' file
+COPY run.sh /etc/services.d/openvpn-client/run
+RUN chmod a+x /etc/services.d/openvpn-client/run
+
+# No CMD or ENTRYPOINT needed; the base image handles it.
