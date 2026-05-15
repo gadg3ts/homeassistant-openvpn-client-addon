@@ -1,7 +1,9 @@
 #!/usr/bin/with-contenv bashio
+# Ensure there are NO blank lines or comments before the shebang above.
+
 set +u
 
-# Fetch config using bashio for better stability in HA
+# Fetch config using bashio
 OVPNFILE=$(bashio::config 'ovpnfile')
 OPENVPN_CONFIG="/share/${OVPNFILE}"
 
@@ -21,4 +23,5 @@ while [[ ! -f "${OPENVPN_CONFIG}" ]]; do
 done
 
 bashio::log.info "Starting OpenVPN connection..."
-openvpn --config "${OPENVPN_CONFIG}"
+# Use 'exec' here to replace the shell process with OpenVPN
+exec openvpn --config "${OPENVPN_CONFIG}"
