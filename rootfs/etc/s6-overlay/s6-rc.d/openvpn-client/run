@@ -6,7 +6,7 @@ OPENVPN_CONFIG="/share/${OVPNFILE}"
 
 bashio::log.info "Fixing permissions for ${OPENVPN_CONFIG}..."
 # Ensure the file is readable
-chmod 644 "${OPENVPN_CONFIG}" || bashio::log.warn "Could not chmod file"
+chmod 644 "${OPENVPN_CONFIG}" || bashio::log.warning "Could not chmod file"
 
 # Initialize TUN interface
 if [ ! -d /dev/net ]; then
