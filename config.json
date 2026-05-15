@@ -1,13 +1,13 @@
 {
   "name": "OpenVPN Client",
-  "version": "2026-05-15-6",
+  "version": "0.1.7",
   "slug": "openvpn_client",
   "description": "OpenVPN Client Add-on",
-  "arch": ["aarch64", "amd64", "armv7"],
+  "arch": ["aarch64", "amd64"],
   "startup": "services",
   "boot": "auto",
   "privileged": ["NET_ADMIN"],
-  "devices": ["/dev/net/tun:/dev/net/tun"],
+  "devices": ["/dev/net/tun"],
   "host_network": true,
   "options": {
     "ovpnfile": "client.ovpn"
