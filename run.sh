@@ -1,36 +1,32 @@
 #!/usr/bin/with-contenv bashio
 set +u
 
-bashio::log.info "--- OpenVPN Client Starting ---"
+bashio::log.info "Starting OpenVPN Client Add-on..."
 
-# 1. Get config name
+# Fetch the filename from addon options
 OVPNFILE=$(bashio::config 'ovpnfile')
-
-# 2. Local Test Fallback
-if [ -z "$OVPNFILE" ] || [ "$OVPNFILE" == "null" ]; then
-    bashio::log.yellow "Local Test Mode: Parsing options.json manually..."
-    OVPNFILE=$(jq --raw-output '.ovpnfile' /data/options.json)
-fi
-
 OPENVPN_CONFIG="/share/${OVPNFILE}"
 
-# 3. Initialize TUN
+# Initialize the TUN interface for the VPN
 if [ ! -d /dev/net ]; then
     mkdir -p /dev/net
 fi
 if [ ! -c /dev/net/tun ]; then
-    bashio::log.info "Creating TUN device..."
+    bashio::log.info "Creating TUN device node..."
     mknod /dev/net/tun c 10 200
 fi
 
-# 4. Check file existence
+# Verify the .ovpn file exists in the /share folder
 if [[ ! -f "${OPENVPN_CONFIG}" ]]; then
-    bashio::log.error "Configuration file ${OPENVPN_CONFIG} not found!"
+    bashio::log.error "-------------------------------------------------------"
+    bashio::log.error "FATAL: Configuration file ${OPENVPN_CONFIG} not found!"
+    bashio::log.error "Please ensure your .ovpn file is in the /share directory."
+    bashio::log.error "-------------------------------------------------------"
     sleep 30
     exit 1
 fi
 
-bashio::log.info "Launching OpenVPN with ${OPENVPN_CONFIG}..."
+bashio::log.info "Launching OpenVPN with configuration: ${OPENVPN_CONFIG}"
 
-# We use --dev tun here as a backup in case the .ovpn is missing it
-exec openvpn --config "${OPENVPN_CONFIG}" --dev tun --cd /share
+# Use exec so OpenVPN becomes the main process of this S6 service
+exec openvpn --config "${OPENVPN_CONFIG}" --cd /share
