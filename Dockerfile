@@ -1,20 +1,20 @@
 FROM ghcr.io/home-assistant/base:latest
 
+# Cache Buster - change this whenever you push a big fix
+ENV LAST_FIX_DATE="2026-05-15-V3"
 ENV LANG=C.UTF-8
 
-# Install requirements for add-on
-RUN apk --no-cache --no-progress upgrade && \
-    apk --no-cache --no-progress add jq openvpn
+# Install requirements
+RUN apk --no-cache upgrade && \
+    apk --no-cache add jq openvpn
 
 # Clean up
 RUN rm -Rf /tmp/*
 
-# Create S6 service directory
-# This tells the init system to manage our script as a service
+# Create S6 service structure
 RUN mkdir -p /etc/services.d/openvpn-client
-
-# Copy run.sh to the service directory and rename it to 'run'
 COPY run.sh /etc/services.d/openvpn-client/run
 RUN chmod a+x /etc/services.d/openvpn-client/run
 
-# No CMD or ENTRYPOINT needed as the base image provides /init
+# CRITICAL: This ensures the S6 supervisor is the ONLY thing that starts
+ENTRYPOINT [ "/init" ]
