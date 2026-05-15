@@ -12,6 +12,6 @@ Then, scroll down and locate the OpenVPN Client Hass.io Add-Ons section. Click o
 
 ## Notes
 
-This is forked from (https://github.com/HedgU4/homeassistant-openvpn-client-addon) but updated to run in a modern HAOS envionment. Gemini helped with debugging the dockerfile issues, as that is not my string point and I just wanted it working...
+This is forked from (https://github.com/HedgU4/homeassistant-openvpn-client-addon) but updated to run in a modern HAOS envionment. Gemini helped with debugging the dockerfile issues, as that is not my strong point and I just wanted it working...
 
 "If you can't do it in bash, then it's not worth doing. For everything else, there's Python" ;)
