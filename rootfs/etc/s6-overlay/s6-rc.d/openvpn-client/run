@@ -1,0 +1,20 @@
+#!/usr/bin/with-contenv bashio
+set +u
+
+bashio::log.info "Starting OpenVPN Client Add-on..."
+
+# Fetch config
+OVPNFILE=$(bashio::config 'ovpnfile')
+OPENVPN_CONFIG="/share/${OVPNFILE}"
+
+# Initialize TUN interface
+if [ ! -d /dev/net ]; then
+    mkdir -p /dev/net
+fi
+if [ ! -c /dev/net/tun ]; then
+    mknod /dev/net/tun c 10 200
+fi
+
+# Launch OpenVPN
+# We use 'exec' so the process is correctly managed by S6
+exec openvpn --config "${OPENVPN_CONFIG}" --cd /share
