@@ -1,11 +1,13 @@
 #!/usr/bin/env bashio
 set +u
 
-bashio::log.info "Starting OpenVPN Client (S6-v3 Mode)..."
+bashio::log.info "Starting OpenVPN Client (Direct Entry Mode)..."
 
+# Fetch config
 OVPNFILE=$(bashio::config 'ovpnfile')
 OPENVPN_CONFIG="/share/${OVPNFILE}"
 
+# Initialize TUN interface
 if [ ! -d /dev/net ]; then
     mkdir -p /dev/net
 fi
@@ -13,4 +15,5 @@ if [ ! -c /dev/net/tun ]; then
     mknod /dev/net/tun c 10 200
 fi
 
+# Launch OpenVPN
 exec openvpn --config "${OPENVPN_CONFIG}" --cd /share
